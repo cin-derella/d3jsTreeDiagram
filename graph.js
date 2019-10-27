@@ -14,8 +14,20 @@ const stratify = d3.stratify()
 const tree = d3.tree()
     .size([dims.width,dims.height]);
 
+// create ordinal scale
+const color = d3.scaleOrdinal(['#f4511e','#e91e63','#e53953','#9c27b0'])
+
 //update function
 const update = (data)=>{
+
+    //remove current nodes
+    graph.selectAll('.node').remove();
+    graph.selectAll('.link').remove();
+
+
+    //update ordinal scale domain
+    color.domain(data.map(item =>item.department));
+
     //get updated root node data
     const rootNode = stratify(data);
     const treeData = tree(rootNode);
@@ -41,6 +53,7 @@ const update = (data)=>{
             .x(d=>d.x)
             .y(d=>d.y)
         );
+
     //create enter node graoups
     const enterNodes = nodes.enter()
         .append('g')
@@ -49,11 +62,15 @@ const update = (data)=>{
 
     //append rects to the nodes
     enterNodes.append('rect')
-        .attr('fill','#aaa')
+        .attr('fill',d=>color(d.data.department))
         .attr('stroke',"#555")
         .attr('stroke-width',2)
         .attr('height',50)
-        .attr('width',d =>d.data.name.length*20);
+        .attr('width',d =>d.data.name.length*20)
+        .attr('transform',d =>{
+            var x = d.data.name.length*10;
+            return `translate(${-x},-30)`
+        })
 
     //append name text
     enterNodes.append('text')
