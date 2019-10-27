@@ -26,7 +26,25 @@ const update = (data)=>{
     const nodes = graph.selectAll('.node')
         .data(treeData.descendants());
 
+    //create enter node graoups
+    const enterNodes = nodes.enter()
+        .append('g')
+            .attr('class','node')
+            .attr('transform',d=>`translate(${d.x},${d.y})`);
 
+    //append rects to the nodes
+    enterNodes.append('rect')
+        .attr('fill','#aaa')
+        .attr('stroke',"#555")
+        .attr('stroke-width',2)
+        .attr('height',50)
+        .attr('width',d =>d.data.name.length*20);
+
+    //append name text
+    enterNodes.append('text')
+        .attr('text-anchor','middle')
+        .attr('fill','white')
+        .text(d=>d.data.name);
 };
 
 
